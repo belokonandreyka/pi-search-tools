@@ -73,9 +73,17 @@ describe.skipIf(!rgAvailable)("runRg (real ripgrep binary)", () => {
     });
 });
 
-describe.skipIf(!rgAvailable)("runRg error handling", () => {
+describe.skipIf(!rgAvailable)("runRg error handling / argv safety", () => {
     test("invalid regex throws with a descriptive message", () => {
         expect(() => run({ pattern: "(" })).toThrow(/rg failed/i);
+    });
+
+    test("a `-`-prefixed pattern is not parsed as a flag", () => {
+        // With the `--` guard, rg treats "-foo" as a regex (which is valid) and
+        // simply finds no matches — importantly it does NOT crash with an
+        // "unrecognized option" error.
+        const result = run({ pattern: "-foo" });
+        expect(result.details.matchCount).toBe(0);
     });
 
     test("nonexistent search path throws", () => {
