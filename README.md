@@ -8,6 +8,37 @@ Both tools shell out to the real `rg` / `fd` binaries. They do **not** auto-down
 install anything; if a binary is missing the tool returns a clear install hint instead
 of failing the session.
 
+## Why
+
+The tools exist to keep search output out of the model's context window when it doesn't
+need to be there. Measured against `bash rg` on the same vitu-portal query for
+`formStateFactory2` (191 matches, 95 files):
+
+- **33 248 B** — full `bash rg -n` stdout returned to the model (all 191 lines).
+- **≤ 16 384 B** — same query through the `rg` tool (16 KB render cap on
+  `content[0].text`).
+- **≈ 2×** less context consumed on this query; the ratio grows with result size.
+
+Wider example — `import` across the same tree (109 818 matches, 11 649 files):
+
+- ~**250 KB** of match lines land in the spill file (`details.fullOutputPath`) on
+  disk — outside the context window.
+- ~**16 KB** enter the model context: truncated render plus a `... spilled to <path>`
+  footer, so a follow-up `read` / grep can still reach every match.
+
+Error shape is load-bearing too: a broken regex, missing path, or missing binary throw
+with a distinct `<tool> failed: <stderr>` message, so agents can tell **"search
+failed"** apart from **"zero matches on a valid query"** (which returns a normal
+`0 matches in 0 files`).
+
+**Adoption note — 2026-07-24 smoke.** Orchestrator (Opus 4.7) auto-selected the `rg`
+tool over `bash rg` on an unhinted query (no explicit "use the rg tool" instruction).
+4/4 smoke blocks passed: trigger-selection, cap + spill behavior, error responses, and
+the byte-delta measurement above. `fd` smoke (2026-07-25): tool call on
+`site/Scripts/**/*.spec.ts` returned 3264 matches with 16 KB render + spill footer;
+`--` guard verified with `pattern: "-foo"` in `/tmp/fd-dash-test` — both `-foo` and
+`x-foo` returned, confirming the leading dash is not eaten as a flag.
+
 ## Prerequisites
 
 ```sh
