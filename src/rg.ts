@@ -12,12 +12,12 @@ export const RgSchema = Type.Object({
     caseSensitive: Type.Optional(Type.Boolean({ description: "Force case-sensitive search. Default false uses ripgrep smart-case." })),
     literal: Type.Optional(Type.Boolean({ description: "Treat the pattern as a fixed string (-F), disabling regex. Default false." })),
     contextLines: Type.Optional(Type.Integer({ minimum: 0, maximum: 3, description: "Lines of context around each match (0-3). Default 0." })),
-    maxMatches: Type.Optional(Type.Integer({ minimum: 1, maximum: 1000, description: "Max matches to render (default 40, hard cap 1000)." })),
+    maxMatches: Type.Optional(Type.Integer({ minimum: 1, maximum: 1000, description: "Max matches to render (default 20, hard cap 1000)." })),
 });
 
 export type RgParams = Static<typeof RgSchema>;
 
-const DEFAULT_MAX_MATCHES = 40;
+const DEFAULT_MAX_MATCHES = 20;
 const MAX_MATCHES_CAP = 1000;
 const MAX_CONTEXT_LINES = 3;
 const STDERR_CAP_BYTES = 4096;

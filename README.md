@@ -59,7 +59,7 @@ Binaries are resolved once at extension init via `which`. The resolved absolute 
 | `caseSensitive` | boolean    | `false` | `false` uses ripgrep smart-case; `true` forces `-s`.         |
 | `literal`       | boolean    | `false` | `true` passes `-F` (fixed-string, no regex).                 |
 | `contextLines`  | int 0..3   | `0`     | Lines of context around each match (`--context`).            |
-| `maxMatches`    | int 1..1000| `40`    | Max matches to render; true count is still reported. See note below.[^rg-lines] |
+| `maxMatches`    | int 1..1000| `20`    | Max matches to render; true count is still reported. See note below.[^rg-lines] |
 
 Output lines are `path:line:col: text`; context lines use ripgrep's `path-line-  text`
 convention.
