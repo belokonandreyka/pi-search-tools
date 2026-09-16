@@ -11,7 +11,7 @@ of failing the session.
 ## Why
 
 The tools exist to keep search output out of the model's context window when it doesn't
-need to be there. Measured against `bash rg` on the same vitu-portal query for
+need to be there. Measured against `bash rg` on the same query in a large Angular repo for
 `formStateFactory2` (191 matches, 95 files):
 
 - **33 248 B** — full `bash rg -n` stdout returned to the model (all 191 lines).
